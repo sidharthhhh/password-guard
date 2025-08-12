@@ -94,7 +94,8 @@
 @layer components {
   /* Password Card Animation */
   .password-card {
-    @apply relative perspective-1000 cursor-pointer;
+    @apply relative cursor-pointer;
+    perspective: 1000px;
     transform-style: preserve-3d;
     transition: var(--transition-smooth);
   }
@@ -104,7 +105,8 @@
   }
   
   .card-face {
-    @apply absolute inset-0 w-full h-full backface-hidden rounded-xl;
+    @apply absolute inset-0 w-full h-full rounded-xl;
+    backface-visibility: hidden;
     background: var(--gradient-card);
     border: 1px solid hsl(var(--border));
     box-shadow: var(--shadow-card);
