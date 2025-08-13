@@ -135,46 +135,46 @@ class ApiService {
 
   // Password methods
   async getPasswords(): Promise<PasswordEntry[]> {
-    const response = await this.request<PasswordEntry[]>('/passwords');
+    const response = await this.request<{ passwords: PasswordEntry[] }>('/passwords');
     
     if (response.success && response.data) {
-      return response.data;
+      return response.data.passwords;
     }
 
     throw new Error(response.message || 'Failed to fetch passwords');
   }
 
   async getPassword(id: string): Promise<PasswordEntry> {
-    const response = await this.request<PasswordEntry>(`/passwords/${id}`);
+    const response = await this.request<{ password: PasswordEntry }>(`/passwords/${id}`);
     
     if (response.success && response.data) {
-      return response.data;
+      return response.data.password;
     }
 
     throw new Error(response.message || 'Failed to fetch password');
   }
 
   async createPassword(passwordData: CreatePasswordData): Promise<PasswordEntry> {
-    const response = await this.request<PasswordEntry>('/passwords', {
+    const response = await this.request<{ password: PasswordEntry }>('/passwords', {
       method: 'POST',
       body: JSON.stringify(passwordData),
     });
 
     if (response.success && response.data) {
-      return response.data;
+      return response.data.password;
     }
 
     throw new Error(response.message || 'Failed to create password');
   }
 
   async updatePassword(id: string, passwordData: Partial<CreatePasswordData>): Promise<PasswordEntry> {
-    const response = await this.request<PasswordEntry>(`/passwords/${id}`, {
+    const response = await this.request<{ password: PasswordEntry }>(`/passwords/${id}`, {
       method: 'PUT',
       body: JSON.stringify(passwordData),
     });
 
     if (response.success && response.data) {
-      return response.data;
+      return response.data.password;
     }
 
     throw new Error(response.message || 'Failed to update password');
@@ -191,10 +191,10 @@ class ApiService {
   }
 
   async searchPasswords(query: string): Promise<PasswordEntry[]> {
-    const response = await this.request<PasswordEntry[]>(`/passwords/search/${encodeURIComponent(query)}`);
+    const response = await this.request<{ passwords: PasswordEntry[] }>(`/passwords/search/${encodeURIComponent(query)}`);
     
     if (response.success && response.data) {
-      return response.data;
+      return response.data.passwords;
     }
 
     throw new Error(response.message || 'Failed to search passwords');

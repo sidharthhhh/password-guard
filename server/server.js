@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? 'https://your-domain.com' 
-    : 'http://localhost:8080',
+    : ['http://localhost:8080', 'http://localhost:8081'],
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));

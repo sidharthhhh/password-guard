@@ -53,17 +53,21 @@ passwordEntrySchema.pre('save', function(next) {
   if (!this.isModified('password')) return next();
   
   try {
-    const algorithm = 'aes-256-cbc';
-    const key = crypto.scryptSync(process.env.JWT_SECRET || 'fallback-key', 'salt', 32);
-    const iv = crypto.randomBytes(16);
-    
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
-    let encrypted = cipher.update(this.password, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    
-    this.password = iv.toString('hex') + ':' + encrypted;
+    // Only encrypt if the password is not already encrypted
+    if (!this.password.includes(':')) {
+      const algorithm = 'aes-256-cbc';
+      const key = crypto.scryptSync(process.env.JWT_SECRET || 'fallback-key', 'salt', 32);
+      const iv = crypto.randomBytes(16);
+      
+      const cipher = crypto.createCipheriv(algorithm, key, iv);
+      let encrypted = cipher.update(this.password, 'utf8', 'hex');
+      encrypted += cipher.final('hex');
+      
+      this.password = iv.toString('hex') + ':' + encrypted;
+    }
     next();
   } catch (error) {
+    console.error('Encryption error:', error);
     next(error);
   }
 });
@@ -71,10 +75,20 @@ passwordEntrySchema.pre('save', function(next) {
 // Decrypt password when retrieving
 passwordEntrySchema.methods.decryptPassword = function() {
   try {
+    // Check if password is encrypted (contains ':')
+    if (!this.password.includes(':')) {
+      return this.password; // Return as-is if not encrypted
+    }
+
     const algorithm = 'aes-256-cbc';
     const key = crypto.scryptSync(process.env.JWT_SECRET || 'fallback-key', 'salt', 32);
     
     const parts = this.password.split(':');
+    if (parts.length !== 2) {
+      console.warn('Invalid password format, returning as-is');
+      return this.password;
+    }
+
     const iv = Buffer.from(parts[0], 'hex');
     const encrypted = parts[1];
     
@@ -85,7 +99,8 @@ passwordEntrySchema.methods.decryptPassword = function() {
     return decrypted;
   } catch (error) {
     console.error('Error decrypting password:', error);
-    return 'Error decrypting password';
+    // Return a placeholder or the original password if decryption fails
+    return '[Password decryption failed]';
   }
 };
 
