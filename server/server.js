@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? 'https://your-domain.com' 
+    ? 'https://password-guard-three.vercel.app' 
     : ['http://localhost:8080', 'http://localhost:8081'],
   credentials: true
 }));
