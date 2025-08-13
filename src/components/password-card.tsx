@@ -4,13 +4,15 @@ import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 
 interface PasswordCardProps {
-  id: string;
+  _id: string;
   title: string;
   username: string;
   password: string;
   website?: string;
   category?: string;
   lastUpdated?: string;
+  onDelete?: () => void;
+  onEdit?: () => void;
 }
 
 export const PasswordCard = ({ 
@@ -19,13 +21,27 @@ export const PasswordCard = ({
   password, 
   website, 
   category,
-  lastUpdated 
+  lastUpdated,
+  onDelete,
+  onEdit
 }: PasswordCardProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete();
+    }
+  };
+
+  const handleEdit = () => {
+    if (onEdit) {
+      onEdit();
+    }
   };
 
   return (
@@ -118,11 +134,21 @@ export const PasswordCard = ({
           </div>
 
           <div className="flex gap-2">
-            <Button variant="ghost" size="sm" className="flex-1">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex-1"
+              onClick={handleEdit}
+            >
               <Edit className="h-3 w-3 mr-1" />
               Edit
             </Button>
-            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-destructive hover:text-destructive"
+              onClick={handleDelete}
+            >
               <Trash2 className="h-3 w-3" />
             </Button>
           </div>

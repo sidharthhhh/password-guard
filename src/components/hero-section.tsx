@@ -1,14 +1,25 @@
 import { Shield, Lock, Key, Check } from "lucide-react";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/security-hero.jpg";
 
 export const HeroSection = () => {
+  const navigate = useNavigate();
+  
   const features = [
     "End-to-end encryption",
     "Secure password generation", 
     "Cross-platform sync",
     "Biometric authentication"
   ];
+
+  const handleGetStarted = () => {
+    navigate('/login');
+  };
+
+  const handleViewDemo = () => {
+    navigate('/register');
+  };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
@@ -57,13 +68,22 @@ export const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button size="lg" className="btn-security glow-effect">
+            <Button 
+              size="lg" 
+              className="btn-security glow-effect"
+              onClick={handleGetStarted}
+            >
               <Key className="h-5 w-5 mr-2" />
               Start Securing Now
             </Button>
-            <Button variant="outline" size="lg" className="border-border hover:bg-accent">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="border-border hover:bg-accent"
+              onClick={handleViewDemo}
+            >
               <Lock className="h-5 w-5 mr-2" />
-              View Demo
+              Create Account
             </Button>
           </div>
 
