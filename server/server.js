@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const client = require('prom-client');
 require('dotenv').config({ path: path.join(__dirname, 'config.env') });
 
 const authRoutes = require('./routes/auth');
@@ -34,6 +35,12 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/password-
 app.use('/api/auth', authRoutes);
 app.use('/api/passwords', passwordRoutes);
 
+// Create a Registry to register the metrics
+const register = new client.Registry();
+
+// Add a default metrics collection
+client.collectDefaultMetrics({ register });
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({
@@ -42,6 +49,12 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV
   });
+});
+
+// Metrics endpoint for Prometheus
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
 });
 
 // Error handling middleware
